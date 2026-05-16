@@ -124,6 +124,17 @@
             animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
+        .polaroid-wrap.loading {
+            background: linear-gradient(90deg, #ffe0e6 25%, #fff0f2 50%, #ffe0e6 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
         /* ── Button ───────────────────────────────────── */
         button {
             background: linear-gradient(135deg, #ff4d6d 0%, #e8315a 100%);
@@ -213,28 +224,34 @@
         // ── Generate Memory ─────────────────────────────────────────────────────
         function generateMemory() {
             if (!sayingsList.length) return;
-
+        
             const saying      = nextSaying();
             const randomImage = imageNames[Math.floor(Math.random() * imageNames.length)];
-
+        
             const polaroid = document.getElementById('polaroid');
             const imgEl    = document.getElementById('mem-img');
             const textEl   = document.getElementById('mem-text');
-
-            // Remove animation classes (force reflow to restart them)
-            polaroid.classList.remove('fade-in');
-            textEl.classList.remove('fade-in');
-            void polaroid.offsetWidth; // reflow
-
-            // Update content
-            imgEl.src            = 'images/' + randomImage;
+        
+            // Show shimmer while loading
+            polaroid.classList.add('loading');
             polaroid.style.display = 'block';
-            textEl.innerText     = saying;
-
-            // Re-add with staggered delay on text
-            polaroid.classList.add('fade-in');
-            textEl.style.animationDelay = '0.15s';
-            textEl.classList.add('fade-in');
+            textEl.innerText = '...';
+        
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                polaroid.classList.remove('loading');
+                polaroid.classList.remove('fade-in');
+                textEl.classList.remove('fade-in');
+                void polaroid.offsetWidth;
+        
+                imgEl.src = 'images/' + randomImage;
+                textEl.innerText = saying;
+        
+                polaroid.classList.add('fade-in');
+                textEl.style.animationDelay = '0.15s';
+                textEl.classList.add('fade-in');
+            };
+            tempImg.src = 'images/' + randomImage;
         }
 
         // ── Floating Hearts ─────────────────────────────────────────────────────
@@ -262,6 +279,14 @@
             setTimeout(() => el.remove(), (+duration + +delay) * 1000 + 200);
         }
 
+        // Silently preload all images in the background
+        window.addEventListener('load', () => {
+            imageNames.forEach(name => {
+                const img = new Image();
+                img.src = 'images/' + name;
+            });
+        });
+                
         // Seed a few hearts immediately, then keep spawning
         for (let i = 0; i < 6; i++) spawnHeart();
         setInterval(spawnHeart, 900);
