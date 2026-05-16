@@ -1,34 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Happy 2nd Anniversary!</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        /* ── Reset & Base ─────────────────────────────── */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ───────────────── Reset ───────────────── */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Lato', sans-serif;
-            background-color: #fff8f5;
+            background: #fff8f5;
             color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 50px 20px 60px;
+            justify-content: center;
+
+            padding: 40px 20px;
             text-align: center;
-            min-height: 100vh;
-            overflow-x: hidden;
             position: relative;
         }
 
-        /* ── Floating Hearts Background ───────────────── */
+        /* ───────────────── Floating Hearts ───────────────── */
         #hearts-canvas {
             position: fixed;
             inset: 0;
-            width: 100%;
-            height: 100%;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
@@ -37,327 +45,597 @@
         .heart {
             position: absolute;
             bottom: -60px;
-            user-select: none;
             animation: floatUp linear forwards;
-            will-change: transform, opacity;
+            user-select: none;
+            opacity: 0.8;
         }
 
         @keyframes floatUp {
-            0%   { transform: translateY(0)      rotate(-10deg) scale(1);    opacity: 0.75; }
-            40%  { transform: translateY(-40vh)  rotate(8deg)   scale(1.05); opacity: 0.6;  }
-            80%  { transform: translateY(-85vh)  rotate(-5deg)  scale(0.95); opacity: 0.25; }
-            100% { transform: translateY(-115vh) rotate(12deg)  scale(0.9);  opacity: 0;    }
+
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-120vh) rotate(20deg);
+                opacity: 0;
+            }
         }
 
-        /* ── Heading ──────────────────────────────────── */
+        /* ───────────────── Heading ───────────────── */
         h1 {
             font-family: 'Playfair Display', serif;
             font-style: italic;
-            font-size: clamp(1.6em, 5vw, 2.4em);
             color: #e8315a;
-            margin-bottom: 36px;
+            font-size: clamp(2rem, 5vw, 3rem);
+
+            margin-bottom: 35px;
+            z-index: 2;
             position: relative;
-            z-index: 1;
-            letter-spacing: 0.01em;
-            text-shadow: 0 2px 12px rgba(232, 49, 90, 0.12);
+
+            text-shadow: 0 3px 12px rgba(232,49,90,0.15);
         }
 
-        /* ── Card ─────────────────────────────────────── */
+        /* ───────────────── Card ───────────────── */
         .card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 28px 24px;
-            box-shadow:
-                0 2px 4px rgba(232,49,90,0.06),
-                0 12px 32px rgba(232,49,90,0.10),
-                0 0 0 1px rgba(232,49,90,0.07);
-            max-width: 420px;
             width: 100%;
-            min-height: 320px;
+            max-width: 430px;
+
+            background: white;
+            border-radius: 22px;
+
+            padding: 28px 24px;
+
+            box-shadow:
+                0 4px 14px rgba(232,49,90,0.08),
+                0 14px 40px rgba(232,49,90,0.12);
+
+            z-index: 2;
+            position: relative;
+
+            min-height: 380px;
+
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+
             margin-bottom: 28px;
-            position: relative;
-            z-index: 1;
         }
 
-        /* ── Polaroid-style image ─────────────────────── */
+        /* ───────────────── Polaroid ───────────────── */
         .polaroid-wrap {
-            background: #fff;
-            padding: 10px 10px 28px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
-            border-radius: 3px;
+
+            background: white;
+
+            padding:
+                10px
+                10px
+                28px;
+
+            border-radius: 4px;
+
+            box-shadow:
+                0 4px 18px rgba(0,0,0,0.15);
+
+            transform: rotate(-1.5deg);
+
             display: none;
+
             width: 100%;
             max-width: 340px;
-            transform: rotate(-1.5deg);
         }
 
         #mem-img {
             width: 100%;
             max-height: 260px;
+
             object-fit: cover;
-            border-radius: 2px;
             display: block;
+
+            border-radius: 2px;
         }
 
-        /* ── Saying Text ──────────────────────────────── */
+        /* ───────────────── Text ───────────────── */
         #mem-text {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1em, 3vw, 1.2em);
+
             margin-top: 22px;
+
             color: #e8315a;
+
+            font-family: 'Playfair Display', serif;
+
+            font-size: clamp(1rem, 3vw, 1.25rem);
+
+            line-height: 1.6;
+
             font-weight: 600;
-            line-height: 1.55;
+
             max-width: 340px;
         }
 
-        /* ── Fade-in animation ────────────────────────── */
+        /* ───────────────── Fade Animation ───────────────── */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(14px); }
-            to   { opacity: 1; transform: translateY(0);    }
+
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .fade-in {
-            animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation: fadeUp 0.6s ease both;
         }
 
-        /* ── Shimmer loading effect ───────────────────── */
-        .polaroid-wrap.loading {
-            background: linear-gradient(90deg, #ffe0e6 25%, #fff0f2 50%, #ffe0e6 75%);
+        /* ───────────────── Loading Shimmer ───────────────── */
+        .loading {
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffe0e6 25%,
+                    #fff0f2 50%,
+                    #ffe0e6 75%
+                );
+
             background-size: 200% 100%;
+
             animation: shimmer 1.2s infinite;
-            min-height: 200px;
+
+            min-height: 220px;
         }
 
         @keyframes shimmer {
-            0%   { background-position: 200% 0;  }
-            100% { background-position: -200% 0; }
+
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
 
-        /* ── Main Reveal Button ───────────────────────── */
-        button {
-            background: linear-gradient(135deg, #ff4d6d 0%, #e8315a 100%);
-            color: white;
+        /* ───────────────── Main Button ───────────────── */
+        .main-btn {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff4d6d 0%,
+                    #e8315a 100%
+                );
+
             border: none;
+
+            color: white;
+
             padding: 16px 38px;
+
             border-radius: 50px;
-            font-family: 'Lato', sans-serif;
-            font-size: 1.05em;
+
+            font-size: 1.05rem;
             font-weight: 700;
-            letter-spacing: 0.03em;
+
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(232, 49, 90, 0.35);
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+            transition: 0.2s ease;
+
+            box-shadow:
+                0 8px 24px rgba(232,49,90,0.28);
+
+            z-index: 2;
             position: relative;
-            z-index: 1;
         }
 
-        button:hover {
-            transform: translateY(-2px) scale(1.04);
-            box-shadow: 0 10px 28px rgba(232, 49, 90, 0.42);
+        .main-btn:hover {
+
+            transform:
+                translateY(-2px)
+                scale(1.04);
         }
 
-        button:active {
-            transform: translateY(0) scale(0.97);
-            box-shadow: 0 4px 12px rgba(232, 49, 90, 0.28);
+        .main-btn:active {
+
+            transform:
+                scale(0.96);
         }
 
-        /* ── Music Toggle Button ──────────────────────── */
+        /* ───────────────── Music Button ───────────────── */
         #music-btn {
+
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 50px;
-            height: 50px;
+
+            bottom: 22px;
+            right: 22px;
+
+            width: 52px;
+            height: 52px;
+
             border-radius: 50%;
+
+            border: 2px solid #ffd7e0;
+
             background: white;
+
             color: #e8315a;
-            font-size: 1.3em;
-            padding: 0;
-            box-shadow: 0 4px 14px rgba(232, 49, 90, 0.25);
-            border: 2px solid #ffe0e6;
+
+            font-size: 1.25rem;
+
             cursor: pointer;
+
             z-index: 999;
-            transition: transform 0.2s, background 0.2s;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
+            box-shadow:
+                0 6px 18px rgba(232,49,90,0.2);
+
+            transition: 0.2s ease;
         }
 
         #music-btn:hover {
-            transform: scale(1.12);
-            background: #fff0f2;
-            box-shadow: 0 6px 18px rgba(232, 49, 90, 0.32);
+            transform: scale(1.08);
         }
-
-        #music-btn:active  { transform: scale(0.95); }
 
         #music-btn.muted {
-            color: #ccc;
+
+            color: #bbb;
             border-color: #eee;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
+
     </style>
 </head>
+
 <body>
 
-    <!-- Floating hearts layer -->
+    <!-- Floating Hearts -->
     <div id="hearts-canvas"></div>
 
-    <!-- Background music -->
-    <audio id="bg-music" loop preload="auto">
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
         <source src="music.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Music mute/unmute button (bottom-right corner) -->
-    <button id="music-btn" onclick="toggleMusic()" title="Toggle music">♪</button>
+    <!-- Music Toggle -->
+    <button id="music-btn" onclick="toggleMusic()">
+        ♪
+    </button>
 
-    <h1>Happy 2nd Anniversary! ❤️</h1>
+    <!-- Heading -->
+    <h1>Happy 2nd Anniversary ❤️</h1>
 
+    <!-- Card -->
     <div class="card">
+
         <div class="polaroid-wrap" id="polaroid">
-            <img id="mem-img" src="" alt="A memory of us">
+            <img id="mem-img" src="" alt="Our Memory">
         </div>
-        <p id="mem-text">Click the button below to reveal a memory!</p>
+
+        <p id="mem-text">
+            Click the button below to reveal a memory 💕
+        </p>
+
     </div>
 
-    <button onclick="generateMemory()">Reveal a Memory 💕</button>
+    <!-- Reveal Button -->
+    <button class="main-btn" onclick="startExperience()">
+        Reveal a Memory 💖
+    </button>
 
     <script>
-        // ── Image list ──────────────────────────────────────────────────────────
-        // ✏️  Edit this list to match your actual filenames in /images/
+
+        /* ───────────────── Images ───────────────── */
+
         const imageNames = [
-            '1.jpg','2.jpg','3.jpg','4.jpg','5.jpg',
-            '6.jpg','7.jpg','8.jpg','9.jpg','10.jpg',
-            '11.jpg','12.jpg','13.jpg','14.jpg','15.jpg'
+
+            '1.jpg',
+            '2.jpg',
+            '3.jpg',
+            '4.jpg',
+            '5.jpg',
+
+            '6.jpg',
+            '7.jpg',
+            '8.jpg',
+            '9.jpg',
+            '10.jpg',
+
+            '11.jpg',
+            '12.jpg',
+            '13.jpg',
+            '14.jpg',
+            '15.jpg'
         ];
 
-        // ── Background Music ────────────────────────────────────────────────────
-        const music    = document.getElementById('bg-music');
+        /* ───────────────── Music ───────────────── */
+
+        const music = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
+
         let musicStarted = false;
-        let isMuted      = false;
+        let isMuted = false;
 
-        music.volume = 0.35; // 0.0 (silent) → 1.0 (full volume)
+        music.volume = 0.35;
 
-        function startMusicOnce() {
+        function startExperience() {
+
+            // Browser user interaction
             if (!musicStarted) {
-                music.play().catch(() => {}); // silently handle browser block
-                musicStarted = true;
+
+                music.play()
+                    .then(() => {
+                        musicStarted = true;
+                    })
+                    .catch((err) => {
+                        console.log("Music blocked:", err);
+                    });
             }
+
+            generateMemory();
         }
 
         function toggleMusic() {
-            isMuted              = !isMuted;
-            music.muted          = isMuted;
-            musicBtn.textContent = isMuted ? '🔇' : '♪';
-            musicBtn.classList.toggle('muted', isMuted);
+
+            isMuted = !isMuted;
+
+            music.muted = isMuted;
+
+            musicBtn.textContent =
+                isMuted ? '🔇' : '♪';
+
+            musicBtn.classList.toggle(
+                'muted',
+                isMuted
+            );
         }
 
-        // ── No-repeat sayings shuffle ───────────────────────────────────────────
-        let sayingsList   = [];
+        /* ───────────────── Sayings ───────────────── */
+
+        let sayingsList = [];
         let shuffledQueue = [];
-        let queueIndex    = 0;
+        let queueIndex = 0;
 
         fetch('sayings.txt')
-            .then(r => r.text())
+
+            .then(res => res.text())
+
             .then(data => {
-                sayingsList   = data.split(',').map(s => s.trim()).filter(Boolean);
-                shuffledQueue = shuffle([...sayingsList]);
+
+                sayingsList = data
+                    .split(',')
+                    .map(s => s.trim())
+                    .filter(Boolean);
+
+                shuffledQueue =
+                    shuffle([...sayingsList]);
             })
+
             .catch(() => {
-                document.getElementById('mem-text').innerText = "Oops! Couldn't load the sayings.";
+
+                document.getElementById(
+                    'mem-text'
+                ).innerText =
+                    "Couldn't load sayings 💔";
             });
 
         function shuffle(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
+
+            for (
+                let i = arr.length - 1;
+                i > 0;
+                i--
+            ) {
+
+                const j =
+                    Math.floor(
+                        Math.random() * (i + 1)
+                    );
+
+                [arr[i], arr[j]] =
+                    [arr[j], arr[i]];
             }
+
             return arr;
         }
 
         function nextSaying() {
-            if (queueIndex >= shuffledQueue.length) {
-                shuffledQueue = shuffle([...sayingsList]);
-                queueIndex    = 0;
+
+            if (
+                queueIndex >=
+                shuffledQueue.length
+            ) {
+
+                shuffledQueue =
+                    shuffle([...sayingsList]);
+
+                queueIndex = 0;
             }
-            return shuffledQueue[queueIndex++];
+
+            return shuffledQueue[
+                queueIndex++
+            ];
         }
 
-        // ── Generate Memory ─────────────────────────────────────────────────────
+        /* ───────────────── Generate Memory ───────────────── */
+
         function generateMemory() {
-            if (!sayingsList.length) return;
 
-            startMusicOnce(); // start music on very first button click
+            if (!sayingsList.length)
+                return;
 
-            const saying      = nextSaying();
-            const randomImage = imageNames[Math.floor(Math.random() * imageNames.length)];
+            const saying =
+                nextSaying();
 
-            const polaroid = document.getElementById('polaroid');
-            const imgEl    = document.getElementById('mem-img');
-            const textEl   = document.getElementById('mem-text');
+            const randomImage =
+                imageNames[
+                    Math.floor(
+                        Math.random()
+                        * imageNames.length
+                    )
+                ];
 
-            // Show shimmer placeholder while image loads
-            polaroid.classList.add('loading');
-            polaroid.style.display = 'block';
-            textEl.innerText       = '...';
+            const polaroid =
+                document.getElementById(
+                    'polaroid'
+                );
 
-            const tempImg  = new Image();
+            const imgEl =
+                document.getElementById(
+                    'mem-img'
+                );
+
+            const textEl =
+                document.getElementById(
+                    'mem-text'
+                );
+
+            polaroid.style.display =
+                'block';
+
+            polaroid.classList.add(
+                'loading'
+            );
+
+            textEl.innerText = '...';
+
+            const tempImg = new Image();
+
             tempImg.onload = () => {
-                polaroid.classList.remove('loading');
-                polaroid.classList.remove('fade-in');
-                textEl.classList.remove('fade-in');
-                void polaroid.offsetWidth; // force reflow to restart animation
 
-                imgEl.src        = 'images/' + randomImage;
-                textEl.innerText = saying;
+                imgEl.src =
+                    'images/' + randomImage;
 
-                polaroid.classList.add('fade-in');
-                textEl.style.animationDelay = '0.15s';
-                textEl.classList.add('fade-in');
+                polaroid.classList.remove(
+                    'loading'
+                );
+
+                textEl.innerText =
+                    saying;
+
+                polaroid.classList.remove(
+                    'fade-in'
+                );
+
+                textEl.classList.remove(
+                    'fade-in'
+                );
+
+                void polaroid.offsetWidth;
+
+                polaroid.classList.add(
+                    'fade-in'
+                );
+
+                textEl.classList.add(
+                    'fade-in'
+                );
             };
-            tempImg.src = 'images/' + randomImage;
+
+            tempImg.src =
+                'images/' + randomImage;
         }
 
-        // ── Preload all images silently on page load ────────────────────────────
-        window.addEventListener('load', () => {
-            imageNames.forEach(name => {
-                const img = new Image();
-                img.src   = 'images/' + name;
-            });
-        });
+        /* ───────────────── Preload Images ───────────────── */
 
-        // ── Floating Hearts ─────────────────────────────────────────────────────
-        const canvas     = document.getElementById('hearts-canvas');
-        const heartEmoji = ['❤️','🩷','💕','💗','💖','🌸'];
+        window.addEventListener(
+            'load',
+            () => {
+
+                imageNames.forEach(name => {
+
+                    const img =
+                        new Image();
+
+                    img.src =
+                        'images/' + name;
+                });
+            }
+        );
+
+        /* ───────────────── Floating Hearts ───────────────── */
+
+        const canvas =
+            document.getElementById(
+                'hearts-canvas'
+            );
+
+        const heartEmoji = [
+
+            '❤️',
+            '🩷',
+            '💕',
+            '💗',
+            '💖',
+            '🌸'
+        ];
 
         function spawnHeart() {
-            const el       = document.createElement('span');
-            el.className   = 'heart';
-            el.textContent = heartEmoji[Math.floor(Math.random() * heartEmoji.length)];
 
-            const size     = (0.7 + Math.random() * 1.1).toFixed(2);
-            const left     = (Math.random() * 98).toFixed(1);
-            const duration = (7   + Math.random() * 9).toFixed(1);
-            const delay    = (Math.random() * 4).toFixed(2);
+            const heart =
+                document.createElement(
+                    'span'
+                );
 
-            el.style.cssText = `
-                left: ${left}vw;
-                font-size: ${size}em;
-                animation-duration: ${duration}s;
-                animation-delay: ${delay}s;
-            `;
+            heart.className =
+                'heart';
 
-            canvas.appendChild(el);
-            setTimeout(() => el.remove(), (+duration + +delay) * 1000 + 200);
+            heart.textContent =
+                heartEmoji[
+                    Math.floor(
+                        Math.random()
+                        * heartEmoji.length
+                    )
+                ];
+
+            const size =
+                (0.8 + Math.random())
+                .toFixed(2);
+
+            const left =
+                (Math.random() * 100)
+                .toFixed(1);
+
+            const duration =
+                (8 + Math.random() * 8)
+                .toFixed(1);
+
+            heart.style.left =
+                left + 'vw';
+
+            heart.style.fontSize =
+                size + 'em';
+
+            heart.style.animationDuration =
+                duration + 's';
+
+            canvas.appendChild(heart);
+
+            setTimeout(() => {
+
+                heart.remove();
+
+            }, duration * 1000);
         }
 
-        for (let i = 0; i < 6; i++) spawnHeart();
-        setInterval(spawnHeart, 900);
+        for (let i = 0; i < 6; i++) {
+            spawnHeart();
+        }
+
+        setInterval(
+            spawnHeart,
+            900
+        );
+
     </script>
+
 </body>
 </html>
