@@ -43,10 +43,10 @@
         }
 
         @keyframes floatUp {
-            0%   { transform: translateY(0)        rotate(-10deg) scale(1);    opacity: 0.75; }
-            40%  { transform: translateY(-40vh)    rotate(8deg)   scale(1.05); opacity: 0.6;  }
-            80%  { transform: translateY(-85vh)    rotate(-5deg)  scale(0.95); opacity: 0.25; }
-            100% { transform: translateY(-115vh)   rotate(12deg)  scale(0.9);  opacity: 0;    }
+            0%   { transform: translateY(0)      rotate(-10deg) scale(1);    opacity: 0.75; }
+            40%  { transform: translateY(-40vh)  rotate(8deg)   scale(1.05); opacity: 0.6;  }
+            80%  { transform: translateY(-85vh)  rotate(-5deg)  scale(0.95); opacity: 0.25; }
+            100% { transform: translateY(-115vh) rotate(12deg)  scale(0.9);  opacity: 0;    }
         }
 
         /* ── Heading ──────────────────────────────────── */
@@ -124,18 +124,20 @@
             animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
+        /* ── Shimmer loading effect ───────────────────── */
         .polaroid-wrap.loading {
             background: linear-gradient(90deg, #ffe0e6 25%, #fff0f2 50%, #ffe0e6 75%);
             background-size: 200% 100%;
             animation: shimmer 1.2s infinite;
+            min-height: 200px;
         }
-        
+
         @keyframes shimmer {
-            0%   { background-position: 200% 0; }
+            0%   { background-position: 200% 0;  }
             100% { background-position: -200% 0; }
         }
 
-        /* ── Button ───────────────────────────────────── */
+        /* ── Main Reveal Button ───────────────────────── */
         button {
             background: linear-gradient(135deg, #ff4d6d 0%, #e8315a 100%);
             color: white;
@@ -162,12 +164,56 @@
             transform: translateY(0) scale(0.97);
             box-shadow: 0 4px 12px rgba(232, 49, 90, 0.28);
         }
+
+        /* ── Music Toggle Button ──────────────────────── */
+        #music-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            color: #e8315a;
+            font-size: 1.3em;
+            padding: 0;
+            box-shadow: 0 4px 14px rgba(232, 49, 90, 0.25);
+            border: 2px solid #ffe0e6;
+            cursor: pointer;
+            z-index: 999;
+            transition: transform 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #music-btn:hover {
+            transform: scale(1.12);
+            background: #fff0f2;
+            box-shadow: 0 6px 18px rgba(232, 49, 90, 0.32);
+        }
+
+        #music-btn:active  { transform: scale(0.95); }
+
+        #music-btn.muted {
+            color: #ccc;
+            border-color: #eee;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
     </style>
 </head>
 <body>
 
     <!-- Floating hearts layer -->
     <div id="hearts-canvas"></div>
+
+    <!-- Background music -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music mute/unmute button (bottom-right corner) -->
+    <button id="music-btn" onclick="toggleMusic()" title="Toggle music">♪</button>
 
     <h1>Happy 2nd Anniversary! ❤️</h1>
 
@@ -182,18 +228,39 @@
 
     <script>
         // ── Image list ──────────────────────────────────────────────────────────
-        // ✏️  Adjust this array to match your actual filenames in /images/
-        //     (e.g. if you only have 7 photos, remove '8.jpg', '9.jpg', '10.jpg')
+        // ✏️  Edit this list to match your actual filenames in /images/
         const imageNames = [
             '1.jpg','2.jpg','3.jpg','4.jpg','5.jpg',
             '6.jpg','7.jpg','8.jpg','9.jpg','10.jpg',
             '11.jpg','12.jpg','13.jpg','14.jpg','15.jpg'
         ];
 
+        // ── Background Music ────────────────────────────────────────────────────
+        const music    = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-btn');
+        let musicStarted = false;
+        let isMuted      = false;
+
+        music.volume = 0.35; // 0.0 (silent) → 1.0 (full volume)
+
+        function startMusicOnce() {
+            if (!musicStarted) {
+                music.play().catch(() => {}); // silently handle browser block
+                musicStarted = true;
+            }
+        }
+
+        function toggleMusic() {
+            isMuted              = !isMuted;
+            music.muted          = isMuted;
+            musicBtn.textContent = isMuted ? '🔇' : '♪';
+            musicBtn.classList.toggle('muted', isMuted);
+        }
+
         // ── No-repeat sayings shuffle ───────────────────────────────────────────
-        let sayingsList    = [];
-        let shuffledQueue  = [];
-        let queueIndex     = 0;
+        let sayingsList   = [];
+        let shuffledQueue = [];
+        let queueIndex    = 0;
 
         fetch('sayings.txt')
             .then(r => r.text())
@@ -224,35 +291,45 @@
         // ── Generate Memory ─────────────────────────────────────────────────────
         function generateMemory() {
             if (!sayingsList.length) return;
-        
+
+            startMusicOnce(); // start music on very first button click
+
             const saying      = nextSaying();
             const randomImage = imageNames[Math.floor(Math.random() * imageNames.length)];
-        
+
             const polaroid = document.getElementById('polaroid');
             const imgEl    = document.getElementById('mem-img');
             const textEl   = document.getElementById('mem-text');
-        
-            // Show shimmer while loading
+
+            // Show shimmer placeholder while image loads
             polaroid.classList.add('loading');
             polaroid.style.display = 'block';
-            textEl.innerText = '...';
-        
-            const tempImg = new Image();
+            textEl.innerText       = '...';
+
+            const tempImg  = new Image();
             tempImg.onload = () => {
                 polaroid.classList.remove('loading');
                 polaroid.classList.remove('fade-in');
                 textEl.classList.remove('fade-in');
-                void polaroid.offsetWidth;
-        
-                imgEl.src = 'images/' + randomImage;
+                void polaroid.offsetWidth; // force reflow to restart animation
+
+                imgEl.src        = 'images/' + randomImage;
                 textEl.innerText = saying;
-        
+
                 polaroid.classList.add('fade-in');
                 textEl.style.animationDelay = '0.15s';
                 textEl.classList.add('fade-in');
             };
             tempImg.src = 'images/' + randomImage;
         }
+
+        // ── Preload all images silently on page load ────────────────────────────
+        window.addEventListener('load', () => {
+            imageNames.forEach(name => {
+                const img = new Image();
+                img.src   = 'images/' + name;
+            });
+        });
 
         // ── Floating Hearts ─────────────────────────────────────────────────────
         const canvas     = document.getElementById('hearts-canvas');
@@ -265,7 +342,7 @@
 
             const size     = (0.7 + Math.random() * 1.1).toFixed(2);
             const left     = (Math.random() * 98).toFixed(1);
-            const duration = (7  + Math.random() * 9).toFixed(1);
+            const duration = (7   + Math.random() * 9).toFixed(1);
             const delay    = (Math.random() * 4).toFixed(2);
 
             el.style.cssText = `
@@ -279,15 +356,6 @@
             setTimeout(() => el.remove(), (+duration + +delay) * 1000 + 200);
         }
 
-        // Silently preload all images in the background
-        window.addEventListener('load', () => {
-            imageNames.forEach(name => {
-                const img = new Image();
-                img.src = 'images/' + name;
-            });
-        });
-                
-        // Seed a few hearts immediately, then keep spawning
         for (let i = 0; i < 6; i++) spawnHeart();
         setInterval(spawnHeart, 900);
     </script>
